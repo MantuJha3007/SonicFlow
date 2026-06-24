@@ -1,93 +1,387 @@
-const userModel = require("../models/user.model");
+const userModel = require("../models/user.model.js");
+const sessionModel = require("../models/session.model.js");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const config = require("../config/config.js");
+const { sendEmail } = require("../services/email.service.js");
+const { generateOtp, getOtpHtml } = require("../utils/utils.js");
+const otpModel = require("../models/otp.model.js");
+const { OAuth2Client } = require("google-auth-library");
 
-async function registerUser(req, res) {
-    const { username, email, password, role = "user" } = req.body;
+const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
 
-    const isUserAlreadyExists = await userModel.findOne({
+
+async function register(req, res) {
+    const { username, email, password } = req.body;
+
+    const isAlreadyRegistered = await userModel.findOne({
         $or: [
             { username },
             { email }
         ]
     })
 
-    if (isUserAlreadyExists) {
-        return res.status(409).json({ message: 'User already exists' })
+    if (isAlreadyRegistered) {
+        res.status(409).json({
+            message: " Username or email already exits"
+        })
     }
 
-    const hash = await bcrypt.hash(password, 10)
-
-
+    const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");  // byheart this
 
     const user = await userModel.create({
         username,
         email,
-        password: hash,
-        role
+        password: hashedPassword
     })
 
-    const token = jwt.sign({
-        id: user._id,
-        role: user.role,
-    }, process.env.JWT_SECRET)
+    const otp = generateOtp();
+    const html = getOtpHtml(otp);
 
-    res.cookie("token", token)
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    await otpModel.create({
+        email,
+        user: user._id,
+        otpHash
+    })
+
+     await sendEmail(email, "OTP Verification", `Your OTP code is  ${otp}`, html)
 
     res.status(201).json({
         message: "User registered successfully",
         user: {
-            id: user._id,
             username: user.username,
             email: user.email,
-            role: user.role,
-        }
+            verified: user.verified
+        },
     })
+
 }
 
-async function loginUser(req, res) {
-    const { username, email, password } = req.body;
+async function login(req, res) {
+    const { email, password } = req.body;
 
-    const user = await userModel.findOne({
-        $or: [
-            { username },
-            { email }
-        ]
-    })
+    const user = await userModel.findOne({ email })
 
     if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" })
+        return res.status(401).json({
+            message: "Invalid email or password"
+        })
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if(!user.verified){
+        return res.status(401).json({
+            message: "Email not verified"
+        })
+    }
+
+    const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+
+    const isPasswordValid = hashedPassword == user.password;
 
     if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials" })
+        return res.status(401).json({
+            message: "Invalid email or password"
+        })
     }
 
-    const token = jwt.sign({
-        id: user._id,
-        role: user.role,
-    }, process.env.JWT_SECRET)
+    const refreshToken = jwt.sign({
+        id: user._id
+    }, config.JWT_SECRET,
+        {
+            expiresIn: "7d"
 
-    res.cookie("token", token)
+        }
+    )
+
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+
+    const session = await sessionModel.create({
+        user: user._id,
+        refreshTokenHash,
+        ip: req.ip,
+        userAgent: req.headers["user-agent"]
+    })
+
+    const accessToken = jwt.sign({
+        id: user._id,
+        sessionId: session._id
+    }, config.JWT_SECRET,
+        {
+            expiresIn: "15m"
+        }
+    )
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 100 // 7  days
+    })
 
     res.status(200).json({
-        message: "User logged in successfully",
+        message: "Logged in successfully",
         user: {
-            id: user._id,
             username: user.username,
             email: user.email,
-            role: user.role,
+        },
+        accessToken,
+    })
+}
+
+async function getMe(req, res) {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({
+            message: "token not found"
+        })
+    }
+
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+
+    const user = await userModel.findById(decoded.id)
+
+    res.status(200).json({
+        message: "user fetched successfully",
+        user: {
+            username: user.username,
+            email: user.email,
         }
     })
 }
 
-async function logoutUser(req,res){
-    res.clearCookie("token");
-    res.status(200).json({message: "User logout successfully"})
+async function refreshToken(req, res) {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return res.status(401).json({
+            message: "Refresh token not found"
+        })
+    }
+
+    const decoded = jwt.verify(refreshToken, config.JWT_SECRET)
+
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+
+    const session = await sessionModel.findOne({
+        refreshTokenHash,
+        revoked: false
+    })
+
+    if (!session) {
+        return res.status(401).json({
+            message: "Invalid refresh token"
+        })
+    }
+
+    const accessToken = jwt.sign({
+        id: decoded.id
+    }, config.JWT_SECRET,
+        {
+            expiresIn: "15m"
+        }
+    )
+
+    const newRefreshToken = jwt.sign({
+        id: decoded.id
+    }, config.JWT_SECRET,
+        {
+            expiresIn: "7d"
+        }
+    )
+
+    const newRefreshTokenHash = crypto.createHash("sha256").update(newRefreshToken).digest("hex");
+
+    session.refreshTokenHash = newRefreshTokenHash;
+    await session.save();
+
+    res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
+
+    res.status(200).json({
+        message: "Access token refreshed successfully",
+        accessToken
+    })
 }
 
+async function logout(req, res) {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return res.status(400).json({
+            message: "Refresh token not found"
+        })
+    }
+
+    const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
 
 
-module.exports = { registerUser,loginUser,logoutUser }
+    const session = await sessionModel.findOne({
+        refreshTokenHash,
+        revoked: false
+    })
+
+    if (!session) {
+        return res.status(400).json({
+            message: "Invalid refresh token"
+        })
+    }
+
+    session.revoked = true;
+    await session.save();
+
+    res.clearCookie("refreshToken")
+
+    res.status(200).json({
+        message: "Logged  out successfully"
+    })
+}
+
+async function logoutAll(req, res) {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return res.status(400).json({
+            message: "Refresh token not found"
+        })
+    }
+
+    const decoded = jwt.verify(refreshToken, config.JWT_SECRET)
+
+    await sessionModel.updateMany({
+        user: decoded.id,
+        revoked: false
+    }, {
+        revoked: true
+    })
+
+    res.status(200).json({
+        message: "Logged out from all devices successfully"
+    })
+}
+
+async function verifyEmail(req,res){
+    const {otp , email} = req.body
+
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    const otpDoc = await otpModel.findOne({
+        email, 
+        otpHash
+    })
+
+    if(!otpDoc){
+        return res.status(400).json({
+            message: "Invalid OTP"
+        })
+    }
+
+    const user = await userModel.findByIdAndUpdate(otpDoc.user,{
+        verified: true
+    })
+
+    await otpModel.deleteMany({
+        user: otpDoc.user
+    })
+
+    return res.status(200).json({
+        message: "Email verified successfully",
+        user:{
+            username: user.username,
+            email: user.email,
+            verified: user.verified
+        }
+    })
+}
+
+async function googleLogin(req, res) {
+    const { credential } = req.body;
+    
+    if (!credential) {
+        return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: config.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, name } = payload;
+
+        let user = await userModel.findOne({ email });
+
+        if (!user) {
+            const randomPassword = crypto.randomBytes(16).toString('hex');
+            const hashedPassword = crypto.createHash("sha256").update(randomPassword).digest("hex");
+            
+            let baseUsername = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            let username = baseUsername;
+            let counter = 1;
+            while (await userModel.findOne({ username })) {
+                username = baseUsername + counter;
+                counter++;
+            }
+
+            user = await userModel.create({
+                username,
+                email,
+                password: hashedPassword,
+                verified: true
+            });
+        } else if (!user.verified) {
+             user.verified = true;
+             await user.save();
+        }
+
+        const refreshToken = jwt.sign({ id: user._id }, config.JWT_SECRET, { expiresIn: "7d" });
+        const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+
+        const session = await sessionModel.create({
+            user: user._id,
+            refreshTokenHash,
+            ip: req.ip,
+            userAgent: req.headers["user-agent"]
+        });
+
+        const accessToken = jwt.sign({ id: user._id, sessionId: session._id }, config.JWT_SECRET, { expiresIn: "15m" });
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        res.status(200).json({
+            message: "Logged in with Google successfully",
+            user: {
+                username: user.username,
+                email: user.email,
+                verified: user.verified
+            },
+            accessToken,
+        });
+    } catch (error) {
+        console.error("Google login error:", error);
+        res.status(401).json({ message: "Invalid Google token" });
+    }
+}
+
+module.exports = {
+    register,
+    login,
+    googleLogin,
+    getMe,
+    refreshToken,
+    logout,
+    logoutAll,
+    verifyEmail
+};

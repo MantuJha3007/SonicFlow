@@ -4,15 +4,20 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { UserPlus, Music, Sparkles } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function RegisterPage() {
-  const { register, error: authError, clearError } = useAuth();
+  const { register, loginWithGoogle, error: authError, clearError } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user'); // 'user' or 'artist'
   const [loading, setLoading] = useState(false);
   const [validationError, setValidationError] = useState('');
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    await loginWithGoogle(credentialResponse.credential);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,6 +153,15 @@ export default function RegisterPage() {
               </>
             )}
           </button>
+
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                setValidationError('Google Login failed');
+              }}
+            />
+          </div>
         </form>
 
         <p className="auth-redirect">

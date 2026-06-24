@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
   // Auth routing protection
   useEffect(() => {
     if (!loading) {
-      const publicPaths = ['/login', '/register'];
+      const publicPaths = ['/login', '/register', '/verify-email'];
       const isPublicPath = publicPaths.includes(pathname);
 
       if (!user && !isPublicPath) {
@@ -98,6 +98,65 @@ export function AuthProvider({ children }) {
         throw new Error(data.message || 'Registration failed');
       }
 
+      // Do NOT set user or log in immediately
+      // Instead, redirect to the verify-email page
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      return { success: true };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyEmail = async (email, otp) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Verification failed');
+      }
+
+      // After successful verification, redirect to login
+      router.push('/login');
+      return { success: true };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (credential) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/google-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Google Login failed');
+      }
+
       setUser(data.user);
       localStorage.setItem('music_app_user', JSON.stringify(data.user));
       router.push('/');
@@ -131,7 +190,9 @@ export function AuthProvider({ children }) {
     loading,
     error,
     login,
+    loginWithGoogle,
     register,
+    verifyEmail,
     logout,
     clearError: () => setError(null),
   };

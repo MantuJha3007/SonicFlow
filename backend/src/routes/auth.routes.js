@@ -1,12 +1,53 @@
-const express = require('express');
-const authController = require("../controllers/auth.controller")
+const { Router } = require("express");
+const authController = require("../controllers/auth.controller.js");
 
-const router = express.Router();
+const authRouter = Router();
 
-router.post('/register',authController.registerUser)
+/**
+ * POST /api/auth/register
+ */
 
-router.post('/login', authController.loginUser)
+authRouter.post("/register", authController.register);
 
-router.post("/logout",authController.logoutUser)
+/**
+ * Post /api/auth/login
+ */
 
-module.exports = router;
+authRouter.post("/login", authController.login);
+
+/**
+ * POST /api/auth/google-login
+ */
+authRouter.post("/google-login", authController.googleLogin);
+
+/**
+ * GET /api/auth/get-me
+ */
+
+authRouter.get("/get-me", authController.getMe)
+
+/**
+ *  GET /api/auth/refresh-token
+ */
+
+authRouter.get("/refresh-token",authController.refreshToken)
+
+/**
+ * GET /api/auth/logout
+ */
+
+authRouter.get("/logout", authController.logout)
+
+/**
+ * GET /api/auth/logout-all
+ */
+
+authRouter.get("/logout-all", authController.logoutAll)
+
+/**
+ * GET /api/auth/verify-email
+ */
+authRouter.post("/verify-email", authController.verifyEmail)
+
+
+module.exports = authRouter;
