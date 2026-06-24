@@ -1,70 +1,122 @@
 # 🎵 SonicFlow 🎵
 
-Welcome to **SonicFlow**! This is a magical full-stack web application. It has a beautiful, speedy front screen for users to click on, and a powerful, secret engine in the back that remembers information, handles secure logins, and saves pictures!
+Welcome to **SonicFlow**, a modern full-stack music and media app built with a polished Next.js frontend and a secure Node.js backend.
 
-## ✨ What Can This Toy Do? (Features)
+## 🚀 What SonicFlow Does
 
-* **Beautiful Looks:** A super fast and pretty user interface built with modern tools.
-* **Secret Club Access:** Secure logins using encrypted passwords and VIP badges (JWT).
-* **Photo Album:** You can upload pictures, and they are magically saved and managed using ImageKit.
-* **Perfect Memory:** Everything is neatly filed away in a MongoDB database so nothing gets lost.
+- **User Authentication** with secure email/password signup, login, and JWT-based session protection.
+- **File Uploads** for music/album artwork, processed through the backend and saved with ImageKit support.
+- **User Profiles** stored in MongoDB, including session and OTP support.
+- **Responsive UI** built with Next.js, React, Tailwind CSS, and Lucide icons.
 
-## 🧱 The Building Blocks (Tech Stack)
+## 🧱 Architecture
 
-Just like a Lego castle needs different types of blocks, SonicFlow uses the best tools for both the front and the back!
+The repository is organized into two main folders:
 
-### 🎨 The Front Screen (Frontend)
-* **Next.js (v16) & React (v19):** The paint and canvas that make everything show up on the screen incredibly fast.
-* **Tailwind CSS (v4):** Our magic wand for styling. It makes adding colors and shapes super easy!
-* **Lucide React:** A giant box of beautiful, shiny icons.
+- `frontend/` — Next.js application for the user interface
+- `backend/` — Express API server with authentication, file uploads, and MongoDB data management
 
-### 🚂 The Magic Engine (Backend)
-* **Node.js & Express:** The speedy mail carrier that listens for clicks on the front screen and brings back answers.
-* **Mongoose (MongoDB):** The giant, endless filing cabinet for our data.
-* **Bcryptjs & JWT:** The clubhouse bouncers that keep our passwords safe.
-* **Multer & ImageKit:** Our photo handlers that process and store images safely.
-* **Local Power:** We like to keep our backend infrastructure safe and sound right here on our own computer. We don't send it up to cloud platforms—it stays local where we can watch it!
+## 📦 Tech Stack
 
----
+### Frontend
+- Next.js 16
+- React 19
+- Tailwind CSS 4
+- Lucide React icons
+- `@react-oauth/google` for Google OAuth UI support
 
-## 🚀 How to Play With This on Your Computer (Local Setup)
+### Backend
+- Node.js + Express
+- MongoDB via Mongoose
+- JWT authentication
+- `bcryptjs` for password hashing
+- `multer` for file upload handling
+- `nodemailer` for email workflows
+- `@imagekit/nodejs` for media storage integration
 
-Want to bring SonicFlow to your own house? Just open your computer's command line (the secret black screen) and follow these simple steps!
+## ⚙️ Local Setup
 
-### Step 1: Copy the Toybox
-First, fetch the whole project from the internet shelf to your computer.
+### 1. Clone the repository
+
 ```bash
-git clone [https://github.com/mantujha3007-web/SonicFlow.git](https://github.com/mantujha3007-web/SonicFlow.git)
-cd SonicFlow
+git clone https://github.com/mantujha3007-web/SonicFlow.git
+cd "d:\Mantu Jha\Project\SonicFlow"
+```
 
-(Note: This project is split into two rooms—one for the Frontend and one for the Backend! Let's set them both up.)
+### 2. Backend setup
 
-
-# Step 2: Start the Magic Engine (Backend)
-Open a terminal window and walk into the backend room to turn on the engine.
-
-# Walk into the backend folder (assuming it is named project_3 or backend)
-cd project_3
-
-# Collect all the missing gears and batteries
+```bash
+cd backend
 npm install
+```
 
-# Create your secret map! 
-# Make a file called .env in this folder and add your MongoDB and ImageKit secrets.
-touch .env
+Create a `.env` file in `backend/` with the required configuration values, for example:
 
-# Push the giant green ON button!
+```env
+PORT=4000
+MONGO_URI=mongodb://localhost:27017/sonicflow
+JWT_SECRET=your_jwt_secret
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_email_password
+IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
+IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
+```
+
+Start the backend:
+
+```bash
 npm run dev
+```
 
-# Step 3: Turn on the Front Screen (Frontend)
-Open a new terminal window (leave the backend running!) and walk into the frontend room.
+### 3. Frontend setup
 
-# Walk into the frontend folder
+Open a second terminal and run:
+
+```bash
 cd frontend
-
-# Collect all the paint and brushes
 npm install
-
-# Turn on the screen!
 npm run dev
+```
+
+By default, the frontend proxy rewrites `/api/*` to the backend URL configured in `frontend/next.config.mjs`.
+
+## 🧪 Running Locally
+
+- Backend: `http://localhost:4000`
+- Frontend: `http://localhost:3000`
+
+## 🎯 Key Features
+
+- Secure user registration and login
+- JWT-protected API routes
+- Email verification and OTP handling
+- Music and album media uploads
+- Clean, responsive Next.js UI
+
+## 📁 Important Files
+
+- `backend/server.js` — Express server entry point
+- `backend/src/routes/auth.routes.js` — authentication routes
+- `backend/src/controllers/auth.controller.js` — auth logic
+- `backend/src/models/user.model.js` — user schema
+- `frontend/src/app/page.js` — main landing page
+- `frontend/src/components/AudioPlayer.js` — audio playback UI
+
+## 💡 Notes
+
+- Use `BACKEND_URL` in `frontend/next.config.mjs` to switch the API proxy endpoint.
+- Make sure MongoDB is running before starting the backend.
+- Keep `.env` secrets out of source control.
+
+## 🙌 Contribution
+
+If you want to improve SonicFlow, feel free to:
+
+- add new music discovery features,
+- improve authentication flows,
+- add playlists or favorites,
+- integrate streaming or share functionality.
+
+Happy building! 🎧
 
