@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -45,7 +47,7 @@ export function AuthProvider({ children }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +81,7 @@ export function AuthProvider({ children }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +116,7 @@ export function AuthProvider({ children }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/verify-email', {
+      const res = await fetch(`${API_URL}/api/auth/verify-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +145,7 @@ export function AuthProvider({ children }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/google-login', {
+      const res = await fetch(`${API_URL}/api/auth/google-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +174,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     setLoading(true);
     try {
-      await fetch('/api/auth/logout', {
+      await fetch(`${API_URL}/api/auth/logout`, {
         method: 'POST',
       });
     } catch (err) {

@@ -19,6 +19,8 @@ import {
   Plus
 } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const { playTrack, playAlbum, currentTrack, isPlaying, togglePlay } = usePlayer();
@@ -51,7 +53,7 @@ export default function DashboardPage() {
   const fetchTracks = async () => {
     setLoadingTracks(true);
     try {
-      const res = await fetch('/api/music');
+      const res = await fetch(`${API_URL}/api/music`);
       const data = await res.json();
       if (res.ok) {
         setTracks(data.musics || []);
@@ -67,7 +69,7 @@ export default function DashboardPage() {
   const fetchAlbums = async () => {
     setLoadingAlbums(true);
     try {
-      const res = await fetch('/api/music/albums');
+      const res = await fetch(`${API_URL}/api/music/albums`);
       const data = await res.json();
       if (res.ok) {
         setAlbums(data.albums || []);
@@ -83,7 +85,7 @@ export default function DashboardPage() {
   const fetchAlbumDetails = async (id) => {
     setLoadingAlbumDetails(true);
     try {
-      const res = await fetch(`/api/music/albums/${id}`);
+      const res = await fetch(`${API_URL}/api/music/albums/${id}`);
       const data = await res.json();
       if (res.ok) {
         setSelectedAlbum(data.album);
@@ -137,7 +139,7 @@ export default function DashboardPage() {
 
     // Using XMLHttpRequest to display actual progress bar
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/music/upload', true);
+    xhr.open('POST', `${API_URL}/api/music/upload`, true);
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
@@ -190,7 +192,7 @@ export default function DashboardPage() {
     }
 
     try {
-      const res = await fetch('/api/music/album', {
+      const res = await fetch(`${API_URL}/api/music/album`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
