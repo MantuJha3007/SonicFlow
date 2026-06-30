@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LogIn, Music } from 'lucide-react';
+import { LogIn, Music, CheckCircle } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 
-export default function LoginPage() {
+function LoginForm() {
   const { login, loginWithGoogle, error: authError, clearError } = useAuth();
+  const searchParams = useSearchParams();
+  const isVerified = searchParams.get('verified') === 'true';
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -51,6 +54,24 @@ export default function LoginPage() {
         {(validationError || authError) && (
           <div className="auth-error">
             {validationError || authError}
+          </div>
+        )}
+
+        {isVerified && (
+          <div className="auth-success" style={{ 
+            backgroundColor: 'rgba(40, 167, 69, 0.1)', 
+            color: '#28a745', 
+            padding: '12px', 
+            borderRadius: '8px', 
+            marginBottom: '20px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            fontSize: '0.9rem',
+            border: '1px solid rgba(40, 167, 69, 0.2)'
+          }}>
+            <CheckCircle size={18} />
+            Your OTP is successfully verified. Proceed to login.
           </div>
         )}
 
@@ -121,5 +142,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="auth-page-container"><div className="auth-card glass-panel"><div style={{textAlign: 'center'}}>Loading...</div></div></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

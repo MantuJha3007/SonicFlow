@@ -129,7 +129,7 @@ export function AuthProvider({ children }) {
       }
 
       // After successful verification, redirect to login
-      router.push('/login');
+      router.push('/login?verified=true');
       return { success: true };
     } catch (err) {
       setError(err.message);

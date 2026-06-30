@@ -760,6 +760,48 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* ================== TAB: SETTINGS ================== */}
+        {activeTab === 'settings' && (
+          <div className="fade-in">
+            <div className="dashboard-title-section">
+              <h1>Settings</h1>
+              <p className="dashboard-subtitle">Manage your account and view your information.</p>
+            </div>
+            
+            <div className="glass-card" style={{ padding: '30px', maxWidth: '600px', marginTop: '20px' }}>
+              <h2 style={{ fontSize: '1.2rem', marginBottom: '20px', color: 'var(--primary)' }}>Account Information</h2>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Username</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{user.username}</div>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Email Address</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{user.email}</div>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Account Type</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: '500', textTransform: 'capitalize' }}>
+                    <span className={`role-badge ${user.role}`} style={{ fontSize: '0.85rem', padding: '4px 10px' }}>
+                      {user.role}
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Status</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: '500', color: 'var(--secondary)' }}>
+                    Verified Account
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
 
       {/* Sticky Bottom Audio Player Controls */}

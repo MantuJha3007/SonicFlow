@@ -45,6 +45,10 @@
   padding: 0;
 }
 
+html {
+  font-size: clamp(14px, 1vw + 10px, 16px);
+}
+
 body {
   background: var(--bg-main);
   background-image: var(--bg-gradient);
@@ -327,6 +331,14 @@ button, input, select, textarea {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.mobile-only-logout {
+  display: none;
+}
+
+.mobile-spacer {
+  display: none;
 }
 
 .menu-label {
@@ -744,8 +756,7 @@ input[type="range"]:hover::-moz-range-thumb {
     flex: 1;
   }
   .menu-group {
-    flex-direction: row;
-    align-items: center;
+    display: contents;
   }
   .menu-label {
     display: none;
@@ -783,49 +794,93 @@ input[type="range"]:hover::-moz-range-thumb {
   
   /* Make sidebar a fixed bottom navigation on mobile */
   .sidebar-container {
-    position: fixed;
-    top: auto !important; /* CRITICAL: Unset the inherited top: 20px */
-    height: auto !important; /* CRITICAL: Ensure it doesn't stretch */
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    margin: 0;
-    padding: 10px 12px;
+    position: fixed !important;
+    top: auto !important;
+    height: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px 4px;
     border-radius: 0;
     border-top: 1px solid var(--glass-border);
-    background: rgba(6, 6, 12, 0.95) !important; /* solid background for mobile nav */
+    background: rgba(6, 6, 12, 0.95) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    z-index: 1200;
-    justify-content: space-around;
+    z-index: 9999 !important;
     border-bottom: none;
+    transform: none !important;
   }
   
   .logo-section, .user-profile-section {
-    display: none; /* Hide in bottom nav */
+    display: none;
+  }
+  
+  .mobile-only-logout {
+    display: contents;
   }
   
   .nav-menu {
     margin: 0;
-    justify-content: space-between;
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
     gap: 0;
   }
 
   .menu-group {
-    gap: 4px;
-    justify-content: space-around;
-    width: 100%;
+    display: contents;
+  }
+  
+  .mobile-spacer {
+    display: none !important;
   }
 
   .nav-item {
+    flex: 1;
+    display: flex;
     flex-direction: column;
-    padding: 6px;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
     gap: 4px;
-    font-size: 0.65rem;
-    text-align: center;
-    border-radius: var(--radius-sm);
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  
+  .nav-item span {
+    display: none;
+  }
+  
+  .center-upload-btn {
+    position: relative;
+    top: -15px; /* stick out above */
+    background: linear-gradient(135deg, var(--primary) 0%, #7b2cbf 100%) !important;
+    color: white;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px var(--primary-glow) !important;
+    margin: 0 auto;
+    flex: none;
+    z-index: 100;
+  }
+  
+  .center-upload-btn span {
+    display: none;
+  }
+  
+  .center-upload-btn svg {
+    width: 26px !important;
+    height: 26px !important;
+    margin: 0 !important;
   }
   
   .nav-item svg {
@@ -1182,6 +1237,45 @@ input[type="range"]:hover::-moz-range-thumb {
   justify-content: center;
   width: 32px;
   margin-right: 12px;
+}
+
+.track-row-detail.song-info {
+  flex: 1;
+  min-width: 0;
+  padding-right: 15px;
+}
+
+/* Very Small Mobile Overrides */
+@media (max-width: 480px) {
+  .audio-player-bar {
+    padding: 0 10px;
+    height: 65px;
+  }
+  .track-info-section {
+    gap: 10px;
+  }
+  .vinyl-art-container {
+    width: 40px;
+    height: 40px;
+  }
+  .track-title {
+    font-size: 0.8rem;
+  }
+  .track-artist {
+    font-size: 0.7rem;
+  }
+  .control-buttons {
+    gap: 12px;
+  }
+  .play-pause-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .auth-card {
+    padding: 24px 20px;
+    margin: 0 16px;
+    width: calc(100% - 32px);
+  }
 }
 
 .track-row-details {
