@@ -49,6 +49,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -83,6 +84,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -118,6 +120,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await fetch(`${API_URL}/api/auth/verify-email`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -147,6 +150,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await fetch(`${API_URL}/api/auth/google-login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -176,6 +180,7 @@ export function AuthProvider({ children }) {
     try {
       await fetch(`${API_URL}/api/auth/logout`, {
         method: 'POST',
+        credentials: 'include',
       });
     } catch (err) {
       console.error('Logout request failed:', err);

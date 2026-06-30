@@ -53,7 +53,7 @@ export default function DashboardPage() {
   const fetchTracks = async () => {
     setLoadingTracks(true);
     try {
-      const res = await fetch(`${API_URL}/api/music`);
+      const res = await fetch(`${API_URL}/api/music`, { credentials: 'include' });
       const data = await res.json();
       if (res.ok) {
         setTracks(data.musics || []);
@@ -69,7 +69,7 @@ export default function DashboardPage() {
   const fetchAlbums = async () => {
     setLoadingAlbums(true);
     try {
-      const res = await fetch(`${API_URL}/api/music/albums`);
+      const res = await fetch(`${API_URL}/api/music/albums`, { credentials: 'include' });
       const data = await res.json();
       if (res.ok) {
         setAlbums(data.albums || []);
@@ -85,7 +85,7 @@ export default function DashboardPage() {
   const fetchAlbumDetails = async (id) => {
     setLoadingAlbumDetails(true);
     try {
-      const res = await fetch(`${API_URL}/api/music/albums/${id}`);
+      const res = await fetch(`${API_URL}/api/music/albums/${id}`, { credentials: 'include' });
       const data = await res.json();
       if (res.ok) {
         setSelectedAlbum(data.album);
@@ -139,6 +139,7 @@ export default function DashboardPage() {
 
     // Using XMLHttpRequest to display actual progress bar
     const xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
     xhr.open('POST', `${API_URL}/api/music/upload`, true);
 
     xhr.upload.onprogress = (event) => {
@@ -194,6 +195,7 @@ export default function DashboardPage() {
     try {
       const res = await fetch(`${API_URL}/api/music/album`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
