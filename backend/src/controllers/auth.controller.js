@@ -14,6 +14,13 @@ const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
 async function register(req, res) {
     const { username, email, password } = req.body;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            message: "Invalid email format"
+        });
+    }
+
     const isAlreadyRegistered = await userModel.findOne({
         $or: [
             { username },

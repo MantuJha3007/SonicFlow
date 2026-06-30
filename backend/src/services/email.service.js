@@ -1,42 +1,44 @@
-const nodemailer = require('nodemailer');
+const { OAuth2Client } = require('google-auth-library');
 const config = require('../config/config.js');
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        type: 'OAuth2',
-        user: config.GOOGLE_USER,
-        clientId: config.GOOGLE_CLIENT_ID,
-        clientSecret: config.GOOGLE_CLIENT_SECRET,
-        refreshToken: config.GOOGLE_REFRESH_TOKEN
-    }
-})
-
-// verify the connection configuration 
-
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('Error connecting to email server:', error);
-    } else {
-        console.log('Email server is ready to send messages');
-    }
-});
-
+const client = new OAuth2Client(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET);
+client.setCredentials({ refresh_token: config.GOOGLE_REFRESH_TOKEN });
 
 const sendEmail = async (to, subject, text, html) => {
     try {
-        const info = await transporter.sendMail({
-            from: `"Your Name" <${config.GOOGLE_USER}>`, //sender address
-            to, // list of receivers
-            subject, // subject line
-            text, // plain text body
-            html, // html body
+        // Construct standard MIME email message
+        const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
+        const messageParts = [
+            `From: "SonicFlow" <${config.GOOGLE_USER}>`,
+            `To: ${to}`,
+            'Content-Type: text/html; charset=utf-8',
+            'MIME-Version: 1.0',
+            `Subject: ${utf8Subject}`,
+            '',
+            html || text, // Fallback to text if html is not provided
+        ];
+        
+        const message = messageParts.join('\n');
+        
+        // Base64url encode the message
+        const encodedMessage = Buffer.from(message)
+            .toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '');
+
+        // Send HTTP POST request to Gmail API to bypass SMTP restrictions
+        const res = await client.request({
+            url: 'https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send',
+            method: 'POST',
+            data: {
+                raw: encodedMessage
+            }
         });
 
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        console.log('Email sent via API. Message ID: %s', res.data.id);
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('Error sending email via API:', error.response?.data || error.message);
     }
 };
 
