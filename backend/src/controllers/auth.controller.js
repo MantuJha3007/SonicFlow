@@ -22,19 +22,14 @@ async function register(req, res) {
     })
 
     if (isAlreadyRegistered) {
-        res.status(409).json({
+        return res.status(409).json({
             message: " Username or email already exits"
         })
     }
 
     const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");  // byheart this
 
-    const user = await userModel.create({
-        username,
-        email,
-        password: hashedPassword,
-        role: req.body.role || "user"
-    })
+    const role = req.body.role || "user";
 
     const otp = generateOtp();
     const html = getOtpHtml(otp);
@@ -43,21 +38,17 @@ async function register(req, res) {
 
     await otpModel.create({
         email,
-        user: user._id,
+        username,
+        password: hashedPassword,
+        role,
         otpHash
     })
 
      await sendEmail(email, "OTP Verification", `Your OTP code is  ${otp}`, html)
 
     res.status(201).json({
-        message: "User registered successfully",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            verified: user.verified
-        },
+        message: "OTP sent successfully. Please verify your email to complete registration.",
+        email: email
     })
 
 }
@@ -308,12 +299,16 @@ async function verifyEmail(req,res){
         })
     }
 
-    const user = await userModel.findByIdAndUpdate(otpDoc.user,{
+    const user = await userModel.create({
+        username: otpDoc.username,
+        email: otpDoc.email,
+        password: otpDoc.password,
+        role: otpDoc.role,
         verified: true
     })
 
     await otpModel.deleteMany({
-        user: otpDoc.user
+        email: otpDoc.email
     })
 
     return res.status(200).json({

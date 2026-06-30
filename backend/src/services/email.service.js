@@ -8,7 +8,6 @@ const transporter = nodemailer.createTransport({
         user: config.GOOGLE_USER,
         clientId: config.GOOGLE_CLIENT_ID,
         clientSecret: config.GOOGLE_CLIENT_SECRET,
-        clientSecret: config.GOOGLE_CLIENT_SECRET,
         refreshToken: config.GOOGLE_REFRESH_TOKEN
     }
 })
@@ -17,7 +16,7 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((error, success) => {
     if (error) {
-        console.error('Error connecting to email server:');
+        console.error('Error connecting to email server:', error);
     } else {
         console.log('Email server is ready to send messages');
     }

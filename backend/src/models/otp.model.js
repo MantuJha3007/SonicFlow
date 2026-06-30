@@ -5,10 +5,17 @@ const otpSchema = new mongoose.Schema({
         type: String,
         required: [true, "Email is required"]
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
-        required: [true, "User is required"]
+    username: {
+        type: String,
+        required: [true, "Username is required"]
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required"]
+    },
+    role: {
+        type: String,
+        default: "user"
     },
     otpHash:{
         type: String,
