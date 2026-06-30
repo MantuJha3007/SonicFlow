@@ -32,7 +32,8 @@ async function register(req, res) {
     const user = await userModel.create({
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: req.body.role || "user"
     })
 
     const otp = generateOtp();
@@ -51,8 +52,10 @@ async function register(req, res) {
     res.status(201).json({
         message: "User registered successfully",
         user: {
+            id: user._id,
             username: user.username,
             email: user.email,
+            role: user.role,
             verified: user.verified
         },
     })
@@ -87,7 +90,8 @@ async function login(req, res) {
     }
 
     const refreshToken = jwt.sign({
-        id: user._id
+        id: user._id,
+        role: user.role
     }, config.JWT_SECRET,
         {
             expiresIn: "7d"
@@ -106,6 +110,7 @@ async function login(req, res) {
 
     const accessToken = jwt.sign({
         id: user._id,
+        role: user.role,
         sessionId: session._id
     }, config.JWT_SECRET,
         {
@@ -117,14 +122,23 @@ async function login(req, res) {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 100 // 7  days
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
+
+    res.cookie("token", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000 // 15 mins
     })
 
     res.status(200).json({
         message: "Logged in successfully",
         user: {
+            id: user._id,
             username: user.username,
             email: user.email,
+            role: user.role,
         },
         accessToken,
     })
@@ -146,8 +160,10 @@ async function getMe(req, res) {
     res.status(200).json({
         message: "user fetched successfully",
         user: {
+            id: user._id,
             username: user.username,
             email: user.email,
+            role: user.role,
         }
     })
 }
@@ -177,7 +193,8 @@ async function refreshToken(req, res) {
     }
 
     const accessToken = jwt.sign({
-        id: decoded.id
+        id: decoded.id,
+        role: decoded.role
     }, config.JWT_SECRET,
         {
             expiresIn: "15m"
@@ -185,7 +202,8 @@ async function refreshToken(req, res) {
     )
 
     const newRefreshToken = jwt.sign({
-        id: decoded.id
+        id: decoded.id,
+        role: decoded.role
     }, config.JWT_SECRET,
         {
             expiresIn: "7d"
@@ -202,6 +220,13 @@ async function refreshToken(req, res) {
         secure: true,
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
+
+    res.cookie("token", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000 // 15 mins
     })
 
     res.status(200).json({
@@ -237,6 +262,7 @@ async function logout(req, res) {
     await session.save();
 
     res.clearCookie("refreshToken")
+    res.clearCookie("token")
 
     res.status(200).json({
         message: "Logged  out successfully"
@@ -293,8 +319,10 @@ async function verifyEmail(req,res){
     return res.status(200).json({
         message: "Email verified successfully",
         user:{
+            id: user._id,
             username: user.username,
             email: user.email,
+            role: user.role,
             verified: user.verified
         }
     })
@@ -341,7 +369,7 @@ async function googleLogin(req, res) {
              await user.save();
         }
 
-        const refreshToken = jwt.sign({ id: user._id }, config.JWT_SECRET, { expiresIn: "7d" });
+        const refreshToken = jwt.sign({ id: user._id, role: user.role }, config.JWT_SECRET, { expiresIn: "7d" });
         const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
 
         const session = await sessionModel.create({
@@ -351,7 +379,7 @@ async function googleLogin(req, res) {
             userAgent: req.headers["user-agent"]
         });
 
-        const accessToken = jwt.sign({ id: user._id, sessionId: session._id }, config.JWT_SECRET, { expiresIn: "15m" });
+        const accessToken = jwt.sign({ id: user._id, role: user.role, sessionId: session._id }, config.JWT_SECRET, { expiresIn: "15m" });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
@@ -360,11 +388,20 @@ async function googleLogin(req, res) {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
+        res.cookie("token", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000
+        });
+
         res.status(200).json({
             message: "Logged in with Google successfully",
             user: {
+                id: user._id,
                 username: user.username,
                 email: user.email,
+                role: user.role,
                 verified: user.verified
             },
             accessToken,
