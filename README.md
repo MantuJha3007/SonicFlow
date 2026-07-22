@@ -31,7 +31,7 @@ The repository is organized into two main folders:
 - JWT authentication
 - `bcryptjs` for password hashing
 - `multer` for file upload handling
-- `nodemailer` for email workflows
+- `google-auth-library` for sending OTP emails via the Gmail API
 - `@imagekit/nodejs` for media storage integration
 
 ## ⚙️ Local Setup
@@ -56,8 +56,10 @@ Create a `.env` file in `backend/` with the required configuration values, for e
 PORT=4000
 MONGO_URI=mongodb://localhost:27017/sonicflow
 JWT_SECRET=your_jwt_secret
-EMAIL_USER=your_email@example.com
-EMAIL_PASS=your_email_password
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REFRESH_TOKEN=your_google_refresh_token
+GOOGLE_USER=your_gmail_address
 IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
