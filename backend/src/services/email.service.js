@@ -29,7 +29,7 @@ const sendEmail = async (to, subject, text, html) => {
 
         // Send HTTP POST request to Gmail API to bypass SMTP restrictions
         const res = await client.request({
-            url: 'https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send',
+            url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send',
             method: 'POST',
             data: {
                 raw: encodedMessage
