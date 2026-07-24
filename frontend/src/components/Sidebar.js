@@ -38,8 +38,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   return (
     <aside className="sidebar-container glass-panel">
       <div className="logo-section">
-        <Image src="/sonicflow-logo.png" alt="SonicFlow Logo" width={32} height={32} className="logo-icon" />
-        <span className="logo-text">SonicFlow</span>
+        <Image src="/sonicflow-logo.png" alt="SonicFlow Logo" width={120} height={50} className="logo-icon" style={{ objectFit: 'contain' }} />
       </div>
 
       <nav className="nav-menu">

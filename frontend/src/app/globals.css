@@ -302,13 +302,14 @@ button, input, select, textarea {
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 12px;
   margin-bottom: 40px;
 }
 
 .logo-icon {
   color: var(--primary);
   filter: drop-shadow(0 0 8px var(--primary-glow));
+  max-width: 100%;
+  height: auto;
 }
 
 .logo-text {
@@ -961,6 +962,22 @@ input[type="range"]:hover::-moz-range-thumb {
   .auth-title {
     font-size: 1.75rem;
   }
+
+  /* Dashboard: top padding so content clears the page header on tablet */
+  .dashboard-title-section {
+    padding-top: 8px;
+  }
+
+  /* Upload form — let it span full width on tablet */
+  .upload-form-card {
+    max-width: 100%;
+    padding: 24px;
+  }
+
+  /* Empty state — smaller padding on tablet */
+  .empty-state {
+    padding: 40px 24px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -979,6 +996,46 @@ input[type="range"]:hover::-moz-range-thumb {
 
   .nav-item span {
     display: none; /* Only show icons on very small screens */
+  }
+
+  /* Dashboard: push content down from the top of the page */
+  .dashboard-title-section h1 {
+    font-size: 1.5rem;
+  }
+  .dashboard-subtitle {
+    font-size: 0.875rem;
+  }
+
+  /* Album detail: smaller cover */
+  .album-detail-cover {
+    width: 140px;
+    height: 140px;
+  }
+  .album-detail-title {
+    font-size: 1.75rem;
+  }
+
+  /* Track rows — single line layout */
+  .track-row {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .track-row-play {
+    width: 24px;
+    margin-right: 6px;
+  }
+
+  /* Upload form */
+  .upload-form-card {
+    padding: 20px 16px;
+  }
+  .upload-dropzone {
+    padding: 24px 16px;
+  }
+
+  /* Picker items */
+  .picker-item {
+    padding: 8px 10px;
   }
 }
 
@@ -2321,4 +2378,73 @@ input[type="range"]:hover::-moz-range-thumb {
   .landing-hero-ctas { flex-direction: column; align-items: center; }
   .landing-hero-btn-primary,
   .landing-hero-btn-secondary { width: 100%; justify-content: center; }
+
+  /* Collapse the nav on small screens — just show logo + CTA */
+  .landing-nav {
+    padding: 0 16px;
+    height: 60px;
+  }
+  .landing-nav-logo {
+    font-size: 1.1rem;
+  }
+  .landing-nav-login {
+    display: none;
+  }
+  .landing-nav-cta {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+  }
+
+  /* Hero spacing */
+  .landing-hero {
+    padding: 80px 16px 50px;
+  }
+  .landing-hero-badge {
+    font-size: 0.75rem;
+  }
+  .landing-hero-stats {
+    gap: 20px;
+  }
+  .landing-hero-stat-value {
+    font-size: 1.3rem;
+  }
+
+  /* Features */
+  .landing-features {
+    padding: 48px 16px;
+  }
+  .landing-feature-card {
+    padding: 24px;
+  }
+
+  /* How it works */
+  .landing-how {
+    padding: 48px 16px 60px;
+  }
+  .landing-how-inner {
+    gap: 40px;
+  }
+  .landing-how-panel-body {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  /* CTA */
+  .landing-cta {
+    padding: 48px 16px;
+  }
+  .landing-cta-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 24px;
+  }
+
+  /* Footer */
+  .landing-footer {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+  .landing-footer-links {
+    gap: 16px;
+  }
 }

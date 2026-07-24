@@ -122,8 +122,7 @@ export default function DashboardPage() {
         {/* ── Navbar ── */}
         <nav className="landing-nav">
           <div className="landing-nav-logo">
-            <Image src="/sonicflow-logo.png" alt="SonicFlow" width={36} height={36} style={{ borderRadius: '10px', objectFit: 'cover' }} />
-            SonicFlow
+            <Image src="/sonicflow-logo.png" alt="SonicFlow" width={110} height={46} style={{ objectFit: 'contain' }} />
           </div>
           <ul className="landing-nav-links">
             <li><a href="#features">Features</a></li>
