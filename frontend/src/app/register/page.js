@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { UserPlus, Music, Sparkles } from 'lucide-react';
+import { UserPlus, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { GoogleLogin } from '@react-oauth/google';
 
 export default function RegisterPage() {
@@ -52,8 +53,8 @@ export default function RegisterPage() {
     <div className="auth-page-container">
       <div className="auth-card glass-panel fade-in">
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-          <div className="avatar" style={{ width: '50px', height: '50px', color: 'var(--secondary)' }}>
-            <Music size={26} />
+          <div className="avatar" style={{ width: '50px', height: '50px', overflow: 'hidden' }}>
+            <Image src="/sonicflow-logo.png" alt="SonicFlow Logo" width={50} height={50} style={{ objectFit: 'cover' }} />
           </div>
         </div>
 

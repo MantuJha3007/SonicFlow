@@ -13,6 +13,7 @@ import {
   Radio,
   Settings
 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Sidebar({ activeTab, setActiveTab }) {
   const { user, logout } = useAuth();
@@ -37,7 +38,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   return (
     <aside className="sidebar-container glass-panel">
       <div className="logo-section">
-        <Radio className="logo-icon" />
+        <Image src="/sonicflow-logo.png" alt="SonicFlow Logo" width={32} height={32} className="logo-icon" />
         <span className="logo-text">SonicFlow</span>
       </div>
 
