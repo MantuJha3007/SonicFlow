@@ -6,6 +6,13 @@ import GoogleProvider from '@/components/GoogleProvider';
 export const metadata = {
   title: 'SonicFlow - Premium Music Streaming & Studio',
   description: 'A premium music streaming platform and artist publishing studio.',
+  manifest: '/manifest.json',
+  themeColor: '#0a0a0f',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'SonicFlow',
+  },
 };
 
 export default function RootLayout({ children }) {
