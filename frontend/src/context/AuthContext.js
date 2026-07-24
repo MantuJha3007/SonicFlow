@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
   // Auth routing protection
   useEffect(() => {
     if (!loading) {
-      const publicPaths = ['/login', '/register', '/verify-email'];
+      const publicPaths = ['/', '/login', '/register', '/verify-email'];
       const isPublicPath = publicPaths.includes(pathname);
 
       if (!user && !isPublicPath) {

@@ -115,7 +115,254 @@ export default function DashboardPage() {
     );
   }
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="landing-page">
+        {/* ── Navbar ── */}
+        <nav className="landing-nav">
+          <div className="landing-nav-logo">
+            <div className="landing-nav-logo-icon">
+              <Music size={18} color="#fff" />
+            </div>
+            SonicFlow
+          </div>
+          <ul className="landing-nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How it works</a></li>
+          </ul>
+          <div className="landing-nav-actions">
+            <a href="/login" className="landing-nav-login">Log In</a>
+            <a href="/register" className="landing-nav-cta">Get Started Free</a>
+          </div>
+        </nav>
+
+        {/* ── Hero ── */}
+        <section className="landing-hero" id="hero">
+          {/* Background Orbs */}
+          <div className="landing-hero-bg">
+            <div className="landing-hero-orb landing-hero-orb-1" />
+            <div className="landing-hero-orb landing-hero-orb-2" />
+            <div className="landing-hero-orb landing-hero-orb-3" />
+          </div>
+
+          <div className="landing-hero-inner">
+            {/* Left — Text Content */}
+            <div className="landing-hero-content">
+              <div className="landing-hero-badge">
+                <span className="landing-hero-badge-dot" />
+                Now in Beta — Free to Join
+              </div>
+              <h1 className="landing-hero-title">
+                Your Music,<br />
+                <span className="landing-hero-title-gradient">Elevated.</span>
+              </h1>
+              <p className="landing-hero-desc">
+                SonicFlow is a premium music studio platform built for artists and listeners. Upload your tracks, organize albums, and stream your sound — all in one beautifully crafted space.
+              </p>
+              <div className="landing-hero-ctas">
+                <a href="/register" className="landing-hero-btn-primary">
+                  <Play size={18} />
+                  Get Started Free
+                </a>
+                <a href="#features" className="landing-hero-btn-secondary">
+                  <Disc size={18} />
+                  Explore Features
+                </a>
+              </div>
+              <div className="landing-hero-stats">
+                <div>
+                  <div className="landing-hero-stat-value">∞</div>
+                  <div className="landing-hero-stat-label">Tracks supported</div>
+                </div>
+                <div>
+                  <div className="landing-hero-stat-value">100%</div>
+                  <div className="landing-hero-stat-label">Free to start</div>
+                </div>
+                <div>
+                  <div className="landing-hero-stat-value">HD</div>
+                  <div className="landing-hero-stat-label">Audio quality</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right — Visual Card */}
+            <div className="landing-hero-visual">
+              <div className="landing-visual-card">
+                {/* Spinning disc */}
+                <div className="landing-visual-disc">
+                  <div className="landing-visual-disc-inner">
+                    <Music size={24} color="var(--primary)" />
+                  </div>
+                </div>
+                {/* Animated bars */}
+                <div className="landing-visual-bars">
+                  <div className="landing-visual-bar" />
+                  <div className="landing-visual-bar" />
+                  <div className="landing-visual-bar" />
+                  <div className="landing-visual-bar" />
+                  <div className="landing-visual-bar" />
+                  <div className="landing-visual-bar" />
+                  <div className="landing-visual-bar" />
+                </div>
+                {/* Now Playing chip */}
+                <div className="landing-visual-now-playing">
+                  <div className="landing-visual-now-playing-dot" />
+                  <div>
+                    <div className="landing-visual-now-playing-text">NOW PLAYING</div>
+                    <div className="landing-visual-now-playing-track">Your Next Hit Track</div>
+                  </div>
+                </div>
+                {/* Floating emoji badges */}
+                <div className="landing-visual-orbit landing-visual-orbit-1">🎧</div>
+                <div className="landing-visual-orbit landing-visual-orbit-2">🎵</div>
+                <div className="landing-visual-orbit landing-visual-orbit-3">🎤</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Features ── */}
+        <section className="landing-features" id="features">
+          <div className="landing-section-label">What you get</div>
+          <h2 className="landing-section-title">Everything you need<br />to share your sound</h2>
+          <p className="landing-section-subtitle">
+            Built from the ground up for musicians, producers, and music lovers who want more than just a player.
+          </p>
+          <div className="landing-features-grid">
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon landing-feature-icon-purple">
+                <UploadCloud size={24} color="var(--primary)" />
+              </div>
+              <div className="landing-feature-title">Upload Your Music</div>
+              <div className="landing-feature-desc">
+                Upload any audio file to the cloud instantly. Your tracks are stored securely and available everywhere, anytime.
+              </div>
+            </div>
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon landing-feature-icon-pink">
+                <FolderPlus size={24} color="var(--accent)" />
+              </div>
+              <div className="landing-feature-title">Organize Albums</div>
+              <div className="landing-feature-desc">
+                Group your tracks into albums or playlists. Build your catalog and present your music professionally.
+              </div>
+            </div>
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon landing-feature-icon-green">
+                <Play size={24} color="var(--secondary)" />
+              </div>
+              <div className="landing-feature-title">Seamless Playback</div>
+              <div className="landing-feature-desc">
+                A buttery-smooth audio player with queue management, progress control, and a beautiful mini-player.
+              </div>
+            </div>
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon landing-feature-icon-blue">
+                <Disc size={24} color="#63b3ed" />
+              </div>
+              <div className="landing-feature-title">Studio Dashboard</div>
+              <div className="landing-feature-desc">
+                Your personal artist studio — track your library, manage uploads, and control every aspect of your catalog.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── How It Works ── */}
+        <section className="landing-how" id="how-it-works">
+          <div className="landing-how-inner">
+            {/* Left */}
+            <div>
+              <div className="landing-section-label">Simple by design</div>
+              <h2 className="landing-section-title">Up and running<br />in minutes</h2>
+              <div className="landing-steps">
+                <div className="landing-step">
+                  <div className="landing-step-number">1</div>
+                  <div>
+                    <div className="landing-step-title">Create your free account</div>
+                    <div className="landing-step-desc">Sign up with email and get instant access. No credit card needed. Your studio awaits.</div>
+                  </div>
+                </div>
+                <div className="landing-step">
+                  <div className="landing-step-number">2</div>
+                  <div>
+                    <div className="landing-step-title">Upload your first track</div>
+                    <div className="landing-step-desc">Drop in any audio file. Add a title, organize into albums, and your music is live in seconds.</div>
+                  </div>
+                </div>
+                <div className="landing-step">
+                  <div className="landing-step-number">3</div>
+                  <div>
+                    <div className="landing-step-title">Listen &amp; manage anywhere</div>
+                    <div className="landing-step-desc">Stream from any device. Manage your library, build albums, and play your music on the go.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right — Fake UI panel */}
+            <div className="landing-how-panel">
+              <div className="landing-how-panel-header">
+                <div className="landing-panel-dot landing-panel-dot-red" />
+                <div className="landing-panel-dot landing-panel-dot-yellow" />
+                <div className="landing-panel-dot landing-panel-dot-green" />
+                <span className="landing-panel-title">My Library — SonicFlow</span>
+              </div>
+              <div className="landing-how-panel-body">
+                {[
+                  { icon: '🎸', name: 'Electric Dreams', meta: 'Album · 4 tracks', time: '3:24', active: true },
+                  { icon: '🎹', name: 'Midnight Keys', meta: 'Single', time: '4:01', active: false },
+                  { icon: '🥁', name: 'Rhythm & Soul', meta: 'Album · 8 tracks', time: '2:58', active: false },
+                  { icon: '🎺', name: 'Golden Horizon', meta: 'Single', time: '5:12', active: false },
+                ].map((track) => (
+                  <div key={track.name} className={`landing-panel-track ${track.active ? 'active' : ''}`}>
+                    <div className="landing-panel-track-thumb" style={{ background: 'rgba(157,78,221,0.12)', border: '1px solid rgba(157,78,221,0.2)' }}>
+                      {track.icon}
+                    </div>
+                    <div className="landing-panel-track-info">
+                      <div className="landing-panel-track-name">{track.name}</div>
+                      <div className="landing-panel-track-meta">{track.meta}</div>
+                    </div>
+                    <div className="landing-panel-track-time">{track.time}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA Banner ── */}
+        <section className="landing-cta">
+          <div className="landing-cta-bg" />
+          <div className="landing-cta-inner">
+            <h2 className="landing-cta-title">Ready to share your sound?</h2>
+            <p className="landing-cta-subtitle">
+              Join SonicFlow today — it's completely free to get started. Upload, organize, and stream your music from anywhere.
+            </p>
+            <a href="/register" className="landing-cta-btn">
+              <Play size={20} />
+              Start for Free — No Credit Card
+            </a>
+          </div>
+        </section>
+
+        {/* ── Footer ── */}
+        <footer className="landing-footer">
+          <div className="landing-footer-logo">
+            <Music size={18} />
+            SonicFlow
+          </div>
+          <ul className="landing-footer-links">
+            <li><a href="/login">Log In</a></li>
+            <li><a href="/register">Sign Up</a></li>
+          </ul>
+          <div className="landing-footer-copy">
+            © {new Date().getFullYear()} SonicFlow. All rights reserved.
+          </div>
+        </footer>
+      </div>
+    );
+  }
 
   // Handle music upload
   const handleUploadSubmit = (e) => {
