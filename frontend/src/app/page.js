@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { usePlayer } from '@/context/PlayerContext';
 import Sidebar from '@/components/Sidebar';
@@ -8,7 +9,7 @@ import AudioPlayer from '@/components/AudioPlayer';
 import { 
   Play, 
   Pause, 
-  Music, 
+  Music,
   Disc, 
   UploadCloud, 
   FolderPlus, 
@@ -121,9 +122,7 @@ export default function DashboardPage() {
         {/* ── Navbar ── */}
         <nav className="landing-nav">
           <div className="landing-nav-logo">
-            <div className="landing-nav-logo-icon">
-              <Music size={18} color="#fff" />
-            </div>
+            <Image src="/sonicflow-logo.png" alt="SonicFlow" width={36} height={36} style={{ borderRadius: '10px', objectFit: 'cover' }} />
             SonicFlow
           </div>
           <ul className="landing-nav-links">
@@ -349,7 +348,7 @@ export default function DashboardPage() {
         {/* ── Footer ── */}
         <footer className="landing-footer">
           <div className="landing-footer-logo">
-            <Music size={18} />
+            <Image src="/sonicflow-logo.png" alt="SonicFlow" width={22} height={22} style={{ borderRadius: '6px', objectFit: 'cover', opacity: 0.8 }} />
             SonicFlow
           </div>
           <ul className="landing-footer-links">

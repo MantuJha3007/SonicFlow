@@ -53,9 +53,7 @@ export default function RegisterPage() {
     <div className="auth-page-container">
       <div className="auth-card glass-panel fade-in">
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-          <div className="avatar" style={{ width: '50px', height: '50px', overflow: 'hidden' }}>
-            <Image src="/sonicflow-logo.png" alt="SonicFlow Logo" width={50} height={50} style={{ objectFit: 'cover' }} />
-          </div>
+          <Image src="/sonicflow-logo.png" alt="SonicFlow Logo" width={140} height={60} style={{ objectFit: 'contain' }} />
         </div>
 
         <h1 className="auth-title">Create account</h1>
