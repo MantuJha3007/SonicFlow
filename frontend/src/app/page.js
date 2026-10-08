@@ -17,7 +17,9 @@ import {
   ArrowLeft,
   CheckCircle,
   FileAudio,
-  Plus
+  Plus,
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -38,10 +40,13 @@ export default function DashboardPage() {
   // Upload States
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadFile, setUploadFile] = useState(null);
+  const [coverArtFile, setCoverArtFile] = useState(null);
+  const [coverArtPreview, setCoverArtPreview] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const uploadFileInputRef = useRef(null);
+  const coverArtInputRef = useRef(null);
 
   // Album Creation States
   const [albumTitle, setAlbumTitle] = useState('');
@@ -381,6 +386,9 @@ export default function DashboardPage() {
     const formData = new FormData();
     formData.append('title', uploadTitle);
     formData.append('music', uploadFile);
+    if (coverArtFile) {
+      formData.append('coverArt', coverArtFile);
+    }
 
     // Using XMLHttpRequest to display actual progress bar
     const xhr = new XMLHttpRequest();
@@ -399,7 +407,10 @@ export default function DashboardPage() {
         setUploadSuccess(true);
         setUploadTitle('');
         setUploadFile(null);
+        setCoverArtFile(null);
+        setCoverArtPreview(null);
         if (uploadFileInputRef.current) uploadFileInputRef.current.value = '';
+        if (coverArtInputRef.current) coverArtInputRef.current.value = '';
         fetchTracks(); // refresh libraries
       } else {
         try {
@@ -609,6 +620,13 @@ export default function DashboardPage() {
                               <Play size={16} fill={isActive ? 'var(--primary)' : 'none'} />
                             )}
                           </div>
+                          <div className="track-row-thumb" style={{ background: track.coverArt ? 'transparent' : getArtGradient(track.title) }}>
+                            {track.coverArt ? (
+                              <img src={track.coverArt} alt={track.title} className="track-thumb-img" />
+                            ) : (
+                              <Music size={14} style={{ opacity: 0.8 }} />
+                            )}
+                          </div>
                           <div className="track-row-details">
                             <span className="track-row-title">{track.title}</span>
                             <span className="track-row-artist">{track.artist?.username || 'Unknown Artist'}</span>
@@ -659,6 +677,13 @@ export default function DashboardPage() {
                           <Pause size={16} fill="var(--primary)" />
                         ) : (
                           <Play size={16} fill={isActive ? 'var(--primary)' : 'none'} />
+                        )}
+                      </div>
+                      <div className="track-row-thumb" style={{ background: track.coverArt ? 'transparent' : getArtGradient(track.title) }}>
+                        {track.coverArt ? (
+                          <img src={track.coverArt} alt={track.title} className="track-thumb-img" />
+                        ) : (
+                          <Music size={14} style={{ opacity: 0.8 }} />
                         )}
                       </div>
                       <div className="track-row-details">
@@ -792,6 +817,13 @@ export default function DashboardPage() {
                                 <Play size={16} fill={isActive ? 'var(--primary)' : 'none'} />
                               )}
                             </div>
+                            <div className="track-row-thumb" style={{ background: track.coverArt ? 'transparent' : getArtGradient(track.title) }}>
+                              {track.coverArt ? (
+                                <img src={track.coverArt} alt={track.title} className="track-thumb-img" />
+                              ) : (
+                                <Music size={14} style={{ opacity: 0.8 }} />
+                              )}
+                            </div>
                             <div className="track-row-details">
                               <span className="track-row-title">{track.title}</span>
                               <span className="track-row-artist">{selectedAlbum.artist?.username || 'Artist'}</span>
@@ -878,6 +910,68 @@ export default function DashboardPage() {
                         <span style={{ fontWeight: 600 }}>Click to choose or drag audio file</span>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                           Supports MP3, WAV, M4A up to 15MB
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label className="form-label" style={{ marginBottom: '6px' }}>Cover Art Photo (Optional)</label>
+                    {coverArtFile && (
+                      <button 
+                        type="button" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCoverArtFile(null);
+                          setCoverArtPreview(null);
+                          if (coverArtInputRef.current) coverArtInputRef.current.value = '';
+                        }}
+                        className="clear-cover-btn"
+                      >
+                        <X size={14} /> Remove Photo
+                      </button>
+                    )}
+                  </div>
+                  <div 
+                    className={`upload-dropzone cover-art-dropzone ${coverArtPreview ? 'has-file' : ''}`}
+                    onClick={() => {
+                      if (!(uploadProgress > 0 && uploadProgress < 100)) {
+                        coverArtInputRef.current.click();
+                      }
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={coverArtInputRef}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          setCoverArtFile(file);
+                          setCoverArtPreview(URL.createObjectURL(file));
+                        }
+                      }}
+                      className="file-input-hidden"
+                    />
+                    
+                    {coverArtPreview ? (
+                      <div className="cover-art-preview-box">
+                        <img src={coverArtPreview} alt="Cover preview" className="cover-art-preview-img" />
+                        <div className="cover-art-preview-info">
+                          <span style={{ fontWeight: 600, color: '#fff' }}>{coverArtFile.name}</span>
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            {(coverArtFile.size / (1024 * 1024)).toFixed(2)} MB • Click to replace image
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <ImageIcon size={36} style={{ color: 'var(--primary)', opacity: 0.8 }} />
+                        <span style={{ fontWeight: 600 }}>Click to select or drop cover art photo</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          JPG, PNG, WEBP (Square recommended)
                         </span>
                       </>
                     )}

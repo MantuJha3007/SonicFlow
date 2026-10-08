@@ -4,26 +4,56 @@ const { uploadFile } = require("../services/storage.service")
 const jwt = require("jsonwebtoken");
 
 async function createMusic(req, res) {
+    try {
         const { title } = req.body;
-        const file = req.file;
+        const musicFile = req.files?.music?.[0] || req.file;
+        const coverArtFile = req.files?.coverArt?.[0];
 
-        const result = await uploadFile(file.buffer.toString('base64'))
+        if (!title) {
+            return res.status(400).json({ message: "Track title is required" });
+        }
+        if (!musicFile) {
+            return res.status(400).json({ message: "Audio file is required" });
+        }
+
+        const audioResult = await uploadFile(
+            musicFile.buffer.toString('base64'),
+            "yt-complete-backend/music",
+            "music_"
+        );
+
+        let coverArtUrl = null;
+        if (coverArtFile) {
+            const coverResult = await uploadFile(
+                coverArtFile.buffer.toString('base64'),
+                "yt-complete-backend/cover-art",
+                "cover_"
+            );
+            coverArtUrl = coverResult.url;
+        }
 
         const music = await musicModel.create({
-            uri: result.url,
+            uri: audioResult.url,
             title,
             artist: req.user.id,
-        })
+            coverArt: coverArtUrl,
+        });
 
         res.status(201).json({
             message: "Music created successfully",
             music: {
                 id: music._id,
+                _id: music._id,
                 uri: music.uri,
                 title: music.title,
                 artist: music.artist,
+                coverArt: music.coverArt,
             }
-        })
+        });
+    } catch (error) {
+        console.error("Error creating music:", error);
+        res.status(500).json({ message: error.message || "Failed to create music" });
+    }
 }
 
 async function createAlbum(req,res) {

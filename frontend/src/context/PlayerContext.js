@@ -13,6 +13,7 @@ export function PlayerProvider({ children }) {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const audioRef = useRef(null);
 
@@ -89,7 +90,7 @@ export function PlayerProvider({ children }) {
     }
   }, [volume, isMuted]);
 
-  const playTrack = (track, newQueue = []) => {
+  const playTrack = (track, newQueue = [], autoExpand = true) => {
     if (newQueue.length > 0) {
       setQueue(newQueue);
       const idx = newQueue.findIndex((t) => t._id === track._id);
@@ -100,7 +101,14 @@ export function PlayerProvider({ children }) {
     }
     setCurrentTrack(track);
     setIsPlaying(true);
+    if (autoExpand) {
+      setIsExpanded(true);
+    }
   };
+
+  const openExpanded = () => setIsExpanded(true);
+  const closeExpanded = () => setIsExpanded(false);
+  const toggleExpanded = () => setIsExpanded((prev) => !prev);
 
   const togglePlay = () => {
     if (!currentTrack && queue.length > 0) {
@@ -160,6 +168,10 @@ export function PlayerProvider({ children }) {
     duration,
     volume,
     isMuted,
+    isExpanded,
+    openExpanded,
+    closeExpanded,
+    toggleExpanded,
     playTrack,
     playAlbum,
     togglePlay,
