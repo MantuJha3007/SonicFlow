@@ -892,11 +892,11 @@ input[type="range"]:hover::-moz-range-thumb {
   }
   
   .audio-player-bar {
-    bottom: 80px; /* sit above the bottom nav */
+    bottom: 90px; /* sit above the ~65px bottom nav with a comfortable gap */
     height: 70px;
     padding: 0 12px;
     border-radius: var(--radius-md);
-    z-index: 1100;
+    z-index: 10001; /* must exceed sidebar z-index: 9999 !important */
   }
   
   .track-info-section {
